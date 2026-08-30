@@ -1,16 +1,16 @@
 {
-  "package_version": "0.1.0",
+  "package_version": "0.2.0",
   "components": {
     "spec-and-test-driven-development-duty": {
       "path": "skills/spec-and-test-driven-development-duty/SKILL.md",
       "role": "entrypoint",
-      "version": "0.1.0"
+      "version": "0.2.0"
     },
     "test-driven-development": {
       "path": "skills/test-driven-development/SKILL.md",
       "role": "portable-wrapper",
       "source_component": "test-driven-development-source",
-      "version": "0.1.0"
+      "version": "0.2.0"
     },
     "test-driven-development-source": {
       "path": "vendor/test-driven-development/SKILL.md",
@@ -19,6 +19,38 @@
       "version": "1.1.0",
       "sha256": "39361054f58ecc8de9cac0f1364aee94e795a446030bb57595f7b7ca0c1ffbbe",
       "copy_mode": "verbatim"
+    },
+    "simplify-code": {
+      "path": "skills/simplify-code/SKILL.md",
+      "role": "portable-wrapper",
+      "source_component": "simplify-code-source",
+      "version": "0.2.0"
+    },
+    "simplify-code-source": {
+      "path": "vendor/simplify-code/SKILL.md",
+      "role": "vendored-supporting-skill",
+      "source": "installed:software-development/simplify-code",
+      "version": "1.1.0",
+      "sha256": "c259970bff23997a9b395f514af12723e33218fca97f529b5e0fa914ac72660e",
+      "copy_mode": "verbatim"
+    },
+    "requesting-code-review": {
+      "path": "skills/requesting-code-review/SKILL.md",
+      "role": "portable-wrapper",
+      "source_component": "requesting-code-review-source",
+      "version": "0.2.0"
+    },
+    "requesting-code-review-source": {
+      "path": "vendor/requesting-code-review/SKILL.md",
+      "role": "vendored-supporting-skill",
+      "source": "installed:requesting-code-review",
+      "version": "unversioned",
+      "sha256": "5a3a44a3667800e2dc836829c6b92fada51e6dc58ac144ec05fe59f47d6bcd84",
+      "copy_mode": "verbatim",
+      "companion_files": {
+        "vendor/requesting-code-review/code-reviewer.md": "595d91d05d5ecba530bd52e1e53c5173d820ab5d4bc223eb7820d69a9ab1c403",
+        "vendor/requesting-code-review/agents/openai.yaml": "1917e3cf2c957e7512343e622b002a873f325fbf931bed77d71afb5a02ca431d"
+      }
     }
   }
 }

@@ -7,8 +7,8 @@
   "plugins": [
     {
       "name": "spec-test-driven-development-duty",
-      "description": "Spec-led vertical TDD with packaged coding standards.",
-      "version": "0.1.0",
+      "description": "Spec-led TDD, simplification, review, and coding standards.",
+      "version": "0.2.0",
       "source": "./",
       "author": {
         "name": "MrBabylonian"

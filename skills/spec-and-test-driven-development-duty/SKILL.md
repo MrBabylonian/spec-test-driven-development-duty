@@ -1,7 +1,7 @@
 ---
 name: spec-and-test-driven-development-duty
 description: Use when implementing a specification or feature list.
-version: 0.1.0
+version: 0.2.0
 metadata:
   package: spec-test-driven-development-duty
   role: entrypoint
@@ -11,86 +11,68 @@ metadata:
 
 ## Overview
 
-Implement requirements as verified vertical slices. Return a behavior-first duty report; assume code is unread.
+Run specifications through TDD, simplification, review, and duty reporting.
 
-**REQUIRED PACKAGE SKILL:** Load this package's sibling `test-driven-development`. Preserve its namespace; without a loader, resolve this file's real path and read `../test-driven-development/SKILL.md`.
+**PACKAGE SKILLS:** Use this package's `test-driven-development`, then `simplify-code`, then `requesting-code-review`. Preserve package namespace. Without a loader, resolve this file's real path and read `../test-driven-development/SKILL.md`, `../simplify-code/SKILL.md`, and `../requesting-code-review/SKILL.md`.
 
-**REQUIRED PACKAGE REFERENCES:** Using that real-path base, read `references/CODE_STYLE.md` and `references/NAMING.md` before planning or code.
+**PACKAGE STANDARDS:** Using that real-path base, read `references/CODE_STYLE.md` and `references/NAMING.md`.
 
 ```text
-NO IMPLEMENTATION CHANGE BEFORE EXPECTED RED.
-NO “COMPLETE” WITHOUT SPEC, INSTRUCTION, AND VERIFICATION EVIDENCE.
+NO IMPLEMENTATION WITHOUT PROVIDED, UNAMBIGUOUS REQUIREMENTS AND EXPECTED RED.
+NO COMPLETION BEFORE SIMPLIFICATION, INDEPENDENT REVIEW, AND EVERY STAGE GATE.
 ```
 
-## Instruction Gate
+## Instruction Gate — Every Stage
 
-- Read active system, user, organization, and project instructions through host discovery.
-- Follow all referenced files.
-- Package standards are mandatory; project rules override only when higher authority permits.
-- Turn architecture, code, naming, scope, and verification rules into checks. Ask when precedence remains unclear.
+Before every stage—Input, Implementation, Simplification, Review, Remediation, and Handoff—rediscover and re-read applicable `AGENTS.md` plus every file it references, then re-read both package standards. Never rely on an earlier read. If a rule changed, revalidate affected work. If any required file is unavailable, block. No exception exists for deadlines, approval, convenience, or prior passing tests.
 
-## Spec Ledger
+## Input Gate
 
-Split every governing spec, feature, and criterion into IDs. Track `source | observable | evidence | status`; never drop prose.
+If neither specifications nor features are provided, ask the user to provide them, then **STOP**. Do not inspect, test, design, or implement guessed scope.
 
-Block an ambiguous external contract unless the user authorizes a provisional assumption. Provisional values stay unapproved, not spec-complete. Label internal assumptions.
+When requirements are provided, split them into IDs with source, observable acceptance, evidence, and status. If any ambiguity remains, ask all clarification questions in one batch, then **STOP**. Only the engineer's answers close ambiguity; until then do not infer, test, or implement.
 
-## Vertical TDD Loop
+## Mandatory Sequence
 
-For one unblocked ID:
+1. **Input:** Pass the Input and Instruction gates.
+2. **Implementation:** Load `test-driven-development`. For one requirement at a time: test → expected RED → minimum compliant GREEN → refactor → focused and required full gates. Update the ledger. Never queue all tests first.
+3. **Simplification:** Only after every requirement is implemented and green, load and execute `simplify-code`. Re-run affected/full gates and re-check the complete specification. Route any discovered behavior defect through a new TDD cycle.
+4. **Review:** Only after simplification passes, load and execute `requesting-code-review` with the specification, ledger, diff, and evidence.
+5. **Remediation:** Fix every Critical or Important finding before proceeding. Behavior changes require RED→GREEN. Then repeat Simplification and Review until no blocking finding remains.
+6. **Handoff:** Re-run the Instruction gate, close the ledger, and use `templates/duty-report.md`.
 
-1. Write one behavior test from its criterion.
-2. Run it; confirm expected RED from missing behavior.
-3. Write minimum compliant code for GREEN.
-4. Run the focused test, refactor green, then run affected and required full gates.
-5. Re-check the criterion and rules; update the ledger.
-6. Repeat.
-
-Never queue all tests first; that is a horizontal slice.
-
-Test inherited code before changing it. A passing characterization test may verify untouched behavior. Never delete inherited code solely because historical RED is unavailable. New or corrected behavior requires RED then GREEN. If this agent wrote the change before RED, revert or delete only that change.
+Never reorder, combine, waive, or skip stages.
 
 ## Completion Gate
 
-Complete only when every requirement has a disposition, changed behavior has RED/GREEN evidence, untouched behavior has direct verification, and every spec, instruction, and tool gate passes.
-
-Fresh unrelated failures may be separated, but block a clean claim. Say `implemented; validation blocked`, not `complete`.
-
-## Duty Report
-
-**REQUIRED TEMPLATE:** Using that real-path base, read `templates/duty-report.md` before handoff. Omit code tours, raw logs, and file lists unless needed for impact or action.
+Complete only when requirements and ambiguities are resolved, every ledger item is evidenced, all stage instruction checks are recorded, simplification passed, independent review has no blocking finding, and required tests and gates are green. Otherwise report `blocked` or `partial`.
 
 ## Quick Reference
 
-| Gate | Proof |
+| Stage | Exit proof |
 |---|---|
-| Package | TDD and standards loaded |
-| Spec | Every requirement tracked |
-| Change | RED → GREEN → refactor |
-| Completion | Ledger closed; gates green |
+| Input | Complete, unambiguous requirements |
+| Implementation | Per-item RED→GREEN evidence |
+| Simplification | Cleanup verified against tests/spec |
+| Review | No Critical or Important finding |
+| Handoff | Closed ledger and duty report |
 
 ## Rationalizations
 
 | Excuse | Reality |
 |---|---|
-| “Correct first; test later.” | Correction before RED is tests-after. |
-| “Make a provisional guess.” | It stays provisional. |
-| “All tests first enables parallelism.” | It loses per-slice feedback. |
-| “Tests pass; spec done.” | Tests can omit prose. |
-| “Failures are old; approved.” | Neither is fresh evidence. |
-| “Naming compliance causes churn.” | Naming is an acceptance check. |
-| “Inherited code lacks RED; delete it.” | Preserve it; RED governs new changes. |
+| “Infer the missing scope.” | Ask, then stop. |
+| “A lead authorized assumptions.” | Only engineer answers close ambiguity. |
+| “Tests pass; finish now.” | Simplify, then review. |
+| “Rules were read earlier.” | Re-read them at every stage. |
 
 ## Red Flags — Stop
 
-- Package dependency unread
-- Change before RED
-- Deleting inherited code to recreate RED
-- Several RED tests before GREEN
-- Guessed or untracked requirement
-- Required reference unread
-- `Complete` with a blocker or failed gate
+- Missing or ambiguous requirement
+- Unread `AGENTS.md` reference
+- Stage skipped or reordered
+- Review blocker unresolved
 
 ## Common Mistakes
 
-- Untestable title: derive an observable or block it.
+- Treating implementation-green as workflow-complete.

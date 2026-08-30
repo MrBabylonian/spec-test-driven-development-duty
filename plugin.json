@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "spec-test-driven-development-duty",
-  "version": "0.1.0",
-  "description": "Spec-led vertical TDD with packaged coding standards.",
+  "version": "0.2.0",
+  "description": "Spec-led TDD, simplification, review, and coding standards.",
   "author": {
     "name": "MrBabylonian"
   },

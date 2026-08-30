@@ -10,6 +10,9 @@ from pathlib import Path
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_VERSION = (PACKAGE_ROOT / "VERSION").read_text(encoding="utf-8").strip() if (PACKAGE_ROOT / "VERSION").exists() else ""
 SELECTED_TDD_SHA256 = "39361054f58ecc8de9cac0f1364aee94e795a446030bb57595f7b7ca0c1ffbbe"
+SIMPLIFY_CODE_SHA256 = "c259970bff23997a9b395f514af12723e33218fca97f529b5e0fa914ac72660e"
+REQUESTING_CODE_REVIEW_SHA256 = "5a3a44a3667800e2dc836829c6b92fada51e6dc58ac144ec05fe59f47d6bcd84"
+CODE_REVIEWER_TEMPLATE_SHA256 = "595d91d05d5ecba530bd52e1e53c5173d820ab5d4bc223eb7820d69a9ab1c403"
 
 
 class FrontmatterReader:
@@ -44,7 +47,12 @@ class PackageContractTests(unittest.TestCase):
             "skills/spec-and-test-driven-development-duty/references/NAMING.md",
             "skills/spec-and-test-driven-development-duty/templates/duty-report.md",
             "skills/test-driven-development/SKILL.md",
+            "skills/simplify-code/SKILL.md",
+            "skills/requesting-code-review/SKILL.md",
             "vendor/test-driven-development/SKILL.md",
+            "vendor/simplify-code/SKILL.md",
+            "vendor/requesting-code-review/SKILL.md",
+            "vendor/requesting-code-review/code-reviewer.md",
             "scripts/validate_package.py",
         )
         missing_paths = [
@@ -87,6 +95,21 @@ class PackageContractTests(unittest.TestCase):
             expected_version = component_contracts[skill_path.parent.name]["version"]
             self.assertEqual(expected_version, frontmatter_fields["version"])
 
+    def test_package_exposes_required_skill_set(self) -> None:
+        discovered_names = {
+            skill_path.parent.name
+            for skill_path in (PACKAGE_ROOT / "skills").glob("*/SKILL.md")
+        }
+        self.assertEqual(
+            {
+                "requesting-code-review",
+                "simplify-code",
+                "spec-and-test-driven-development-duty",
+                "test-driven-development",
+            },
+            discovered_names,
+        )
+
     def test_entrypoint_is_host_neutral(self) -> None:
         entrypoint_text = (
             PACKAGE_ROOT
@@ -112,6 +135,8 @@ class PackageContractTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         required_fragments = (
             "../test-driven-development/SKILL.md",
+            "../simplify-code/SKILL.md",
+            "../requesting-code-review/SKILL.md",
             "real-path base",
             "references/CODE_STYLE.md",
             "references/NAMING.md",
@@ -163,6 +188,54 @@ class PackageContractTests(unittest.TestCase):
         self.assertIn("../../vendor/test-driven-development/SKILL.md", wrapper_text)
         self.assertIn("Resolve this file's real path", wrapper_text)
         self.assertNotIn("Hermes Agent Integration", wrapper_text)
+
+    def test_workflow_wrappers_load_selected_sources(self) -> None:
+        wrapper_contracts = {
+            "simplify-code": "../../vendor/simplify-code/SKILL.md",
+            "requesting-code-review": "../../vendor/requesting-code-review/SKILL.md",
+        }
+        for skill_name, required_path in wrapper_contracts.items():
+            wrapper_text = (
+                PACKAGE_ROOT / "skills" / skill_name / "SKILL.md"
+            ).read_text(encoding="utf-8")
+            self.assertIn(required_path, wrapper_text)
+            self.assertIn("Resolve this file's real path", wrapper_text)
+
+    def test_vendored_workflow_sources_match(self) -> None:
+        expected_digests = {
+            "vendor/simplify-code/SKILL.md": SIMPLIFY_CODE_SHA256,
+            "vendor/requesting-code-review/SKILL.md": REQUESTING_CODE_REVIEW_SHA256,
+            "vendor/requesting-code-review/code-reviewer.md": CODE_REVIEWER_TEMPLATE_SHA256,
+        }
+        for relative_path, expected_digest in expected_digests.items():
+            actual_digest = hashlib.sha256(
+                (PACKAGE_ROOT / relative_path).read_bytes()
+            ).hexdigest()
+            self.assertEqual(expected_digest, actual_digest)
+
+    def test_entrypoint_enforces_mandatory_sequence(self) -> None:
+        entrypoint_text = (
+            PACKAGE_ROOT / "skills/spec-and-test-driven-development-duty/SKILL.md"
+        ).read_text(encoding="utf-8")
+        required_fragments = (
+            "If neither specifications nor features are provided",
+            "ask the user to provide them",
+            "If any ambiguity remains",
+            "ask all clarification questions",
+            "Only the engineer's answers close ambiguity",
+            "Before every stage",
+            "AGENTS.md",
+            "every file it references",
+            "No exception",
+            "simplify-code",
+            "requesting-code-review",
+        )
+        for required_fragment in required_fragments:
+            self.assertIn(required_fragment, entrypoint_text)
+        self.assertLess(
+            entrypoint_text.index("simplify-code"),
+            entrypoint_text.index("requesting-code-review"),
+        )
 
     def test_readme_defines_methodology_boundary(self) -> None:
         readme_text = (PACKAGE_ROOT / "README.md").read_text(encoding="utf-8")

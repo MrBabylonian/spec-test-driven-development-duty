@@ -126,6 +126,8 @@ class PackageValidator:
         component_contracts = components_payload.get("components") or {}
         discovered_skill_paths = sorted(skills_root.glob("*/SKILL.md"))
         expected_names = {
+            "requesting-code-review",
+            "simplify-code",
             "spec-and-test-driven-development-duty",
             "test-driven-development",
         }
@@ -164,49 +166,92 @@ class PackageValidator:
             self.errors.append("COMPONENTS.json components must be an object")
             return
 
-        wrapper_contract = component_contracts.get("test-driven-development")
+        vendored_contracts = (
+            (
+                "test-driven-development",
+                "test-driven-development-source",
+                ["SKILL.md"],
+            ),
+            ("simplify-code", "simplify-code-source", ["SKILL.md"]),
+            (
+                "requesting-code-review",
+                "requesting-code-review-source",
+                ["SKILL.md", "agents/openai.yaml", "code-reviewer.md"],
+            ),
+        )
+        for wrapper_name, source_name, expected_files in vendored_contracts:
+            self._validate_vendored_skill(
+                component_contracts,
+                wrapper_name,
+                source_name,
+                expected_files,
+            )
+
+    def _validate_vendored_skill(
+        self,
+        component_contracts: dict,
+        wrapper_name: str,
+        source_name: str,
+        expected_files: list[str],
+    ) -> None:
+        wrapper_contract = component_contracts.get(wrapper_name)
         if not isinstance(wrapper_contract, dict):
-            self.errors.append("Missing portable TDD wrapper contract")
+            self.errors.append(f"Missing portable wrapper contract: {wrapper_name}")
             return
         source_component_name = wrapper_contract.get("source_component")
-        if source_component_name != "test-driven-development-source":
-            self.errors.append("Portable TDD wrapper has the wrong source component")
+        if source_component_name != source_name:
+            self.errors.append(f"Wrong source component for wrapper: {wrapper_name}")
 
-        tdd_contract = component_contracts.get(source_component_name)
-        if not isinstance(tdd_contract, dict):
-            self.errors.append("Missing vendored TDD component contract")
+        source_contract = component_contracts.get(source_component_name)
+        if not isinstance(source_contract, dict):
+            self.errors.append(f"Missing vendored component contract: {source_name}")
             return
-        if tdd_contract.get("copy_mode") != "verbatim":
-            self.errors.append("TDD component must use verbatim copy mode")
-        tdd_relative_path = tdd_contract.get("path")
-        if not isinstance(tdd_relative_path, str):
-            self.errors.append("TDD component path must be a string")
+        if source_contract.get("copy_mode") != "verbatim":
+            self.errors.append(f"Vendored component is not verbatim: {source_name}")
+        source_relative_path = source_contract.get("path")
+        if not isinstance(source_relative_path, str):
+            self.errors.append(f"Vendored component path is invalid: {source_name}")
             return
-        tdd_path = self.package_root / tdd_relative_path
-        if not tdd_path.is_file():
-            self.errors.append("TDD component file is missing")
+        source_path = self.package_root / source_relative_path
+        if not source_path.is_file():
+            self.errors.append(f"Vendored component file is missing: {source_name}")
             return
-        actual_digest = hashlib.sha256(tdd_path.read_bytes()).hexdigest()
-        if actual_digest != tdd_contract.get("sha256"):
-            self.errors.append("TDD component digest mismatch")
+        actual_digest = hashlib.sha256(source_path.read_bytes()).hexdigest()
+        if actual_digest != source_contract.get("sha256"):
+            self.errors.append(f"Vendored component digest mismatch: {source_name}")
 
-        tdd_directory_files = sorted(
-            package_path.relative_to(tdd_path.parent).as_posix()
-            for package_path in tdd_path.parent.rglob("*")
+        source_directory_files = sorted(
+            package_path.relative_to(source_path.parent).as_posix()
+            for package_path in source_path.parent.rglob("*")
             if package_path.is_file()
         )
-        if tdd_directory_files != ["SKILL.md"]:
+        if source_directory_files != expected_files:
             self.errors.append(
-                f"Unexpected files in TDD component: {tdd_directory_files}"
+                f"Unexpected files in {source_name}: {source_directory_files}"
             )
+
+        companion_contracts = source_contract.get("companion_files") or {}
+        if not isinstance(companion_contracts, dict):
+            self.errors.append(f"Invalid companion files: {source_name}")
+        else:
+            for companion_path_text, expected_digest in companion_contracts.items():
+                companion_path = self.package_root / companion_path_text
+                if not companion_path.is_file():
+                    self.errors.append(f"Missing companion file: {companion_path_text}")
+                    continue
+                companion_digest = hashlib.sha256(companion_path.read_bytes()).hexdigest()
+                if companion_digest != expected_digest:
+                    self.errors.append(f"Companion digest mismatch: {companion_path_text}")
 
         wrapper_path = self.package_root / str(wrapper_contract.get("path", ""))
         if not wrapper_path.is_file():
-            self.errors.append("Portable TDD wrapper file is missing")
+            self.errors.append(f"Portable wrapper file is missing: {wrapper_name}")
             return
         wrapper_text = wrapper_path.read_text(encoding="utf-8")
-        if "../../vendor/test-driven-development/SKILL.md" not in wrapper_text:
-            self.errors.append("Portable TDD wrapper does not load vendored source")
+        vendor_directory = source_name.removesuffix("-source")
+        required_path = f"../../vendor/{vendor_directory}/SKILL.md"
+        if required_path not in wrapper_text:
+            self.errors.append(f"Portable wrapper misses vendored source: {wrapper_name}")
 
     def _validate_portability(self) -> None:
         entrypoint_path = (
@@ -230,6 +275,8 @@ class PackageValidator:
 
         required_fragments = (
             "../test-driven-development/SKILL.md",
+            "../simplify-code/SKILL.md",
+            "../requesting-code-review/SKILL.md",
             "references/CODE_STYLE.md",
             "references/NAMING.md",
             "templates/duty-report.md",
