@@ -365,6 +365,8 @@ When adding mocks or test utilities, read @testing-anti-patterns.md to avoid com
 - Adding test-only methods to production classes
 - Mocking without understanding dependencies
 
+If `@` references are unsupported, resolve this skill's real path and read `testing-anti-patterns.md` directly.
+
 ## Final Rule
 
 ```

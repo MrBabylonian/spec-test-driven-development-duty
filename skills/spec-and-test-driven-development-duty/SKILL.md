@@ -15,7 +15,7 @@ Implement requirements as verified vertical slices. Return a behavior-first duty
 
 **REQUIRED PACKAGE SKILL:** Load this package's sibling `test-driven-development`. Preserve its namespace; without a loader, resolve this file's real path and read `../test-driven-development/SKILL.md`.
 
-**REQUIRED PACKAGE REFERENCES:** Before planning or code, read `references/CODE_STYLE.md` and `references/NAMING.md`.
+**REQUIRED PACKAGE REFERENCES:** Using that real-path base, read `references/CODE_STYLE.md` and `references/NAMING.md` before planning or code.
 
 ```text
 NO IMPLEMENTATION CHANGE BEFORE EXPECTED RED.
@@ -58,13 +58,13 @@ Fresh unrelated failures may be separated, but block a clean claim. Say `impleme
 
 ## Duty Report
 
-**REQUIRED TEMPLATE:** Read `templates/duty-report.md` before handoff. Omit code tours, raw logs, and file lists unless needed for impact or action.
+**REQUIRED TEMPLATE:** Using that real-path base, read `templates/duty-report.md` before handoff. Omit code tours, raw logs, and file lists unless needed for impact or action.
 
 ## Quick Reference
 
 | Gate | Proof |
 |---|---|
-| Package | Sibling TDD skill and standards loaded |
+| Package | TDD and standards loaded |
 | Spec | Every requirement tracked |
 | Change | RED → GREEN → refactor |
 | Completion | Ledger closed; gates green |
@@ -94,4 +94,3 @@ Fresh unrelated failures may be separated, but block a clean claim. Say `impleme
 ## Common Mistakes
 
 - Untestable title: derive an observable or block it.
-- Report outcomes and risks—not internals.

@@ -26,6 +26,12 @@ tests/test_package.py                            Package contract tests
 
 Load `spec-and-test-driven-development-duty`. It requires the sibling `test-driven-development` skill and the two packaged standards. The skills contain no host-specific runtime paths or commands.
 
+## Methodology boundary
+
+The package owns every methodology dependency: duty workflow, TDD discipline, code style, naming, anti-pattern guidance, and report contract. Active host and project inputs—such as repository instructions, build commands, and application tests—remain external because they describe the project being changed, not this methodology.
+
+Version 0.1.0 does not auto-run or enforce policy through hooks. The host must load or invoke the entrypoint skill. Its verification gates then fail closed when required project evidence is unavailable.
+
 ## Installation
 
 ### Agent Plugins v1 hosts

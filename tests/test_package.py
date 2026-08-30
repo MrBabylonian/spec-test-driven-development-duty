@@ -104,6 +104,7 @@ class PackageContractTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         required_fragments = (
             "../test-driven-development/SKILL.md",
+            "real-path base",
             "references/CODE_STYLE.md",
             "references/NAMING.md",
             "templates/duty-report.md",
@@ -119,6 +120,19 @@ class PackageContractTests(unittest.TestCase):
         self.assertIn("Return only these seven fields.", template_text)
         self.assertIn("Do not append file lists", template_text)
         self.assertIn("`Issues encountered`", template_text)
+
+    def test_tdd_reference_has_fallback(self) -> None:
+        tdd_text = (
+            PACKAGE_ROOT / "skills/test-driven-development/SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("testing-anti-patterns.md", tdd_text)
+        self.assertIn("resolve this skill's real path", tdd_text)
+
+    def test_readme_defines_methodology_boundary(self) -> None:
+        readme_text = (PACKAGE_ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("## Methodology boundary", readme_text)
+        self.assertIn("host and project inputs", readme_text)
+        self.assertIn("does not auto-run", readme_text)
 
     def test_package_contains_no_symlinks(self) -> None:
         symlink_paths = [
