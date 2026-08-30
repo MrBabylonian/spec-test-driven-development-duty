@@ -6,6 +6,7 @@ A self-contained, versioned methodology package for implementing specifications 
 
 ```text
 plugin.json                                      Agent Plugins v1 manifest
+COMPONENTS.json                                  Component versions and digests
 skills/
   spec-and-test-driven-development-duty/
     SKILL.md                                     Portable entrypoint
@@ -13,8 +14,10 @@ skills/
     references/NAMING.md                         Mandatory naming standard
     templates/duty-report.md                     Seven-field handoff contract
   test-driven-development/
-    SKILL.md                                     Packaged TDD discipline
-    testing-anti-patterns.md                     Supporting TDD reference
+    SKILL.md                                     Portable wrapper for selected TDD
+vendor/
+  test-driven-development/
+    SKILL.md                                     Verbatim selected TDD skill v1.1.0
 .claude-plugin/                                  Claude Code manifests
 .codex-plugin/                                   Codex plugin manifest
 .agents/plugins/                                 Codex-compatible marketplace
@@ -24,7 +27,7 @@ tests/test_package.py                            Package contract tests
 
 ## Entry point
 
-Load `spec-and-test-driven-development-duty`. It requires the sibling `test-driven-development` skill and the two packaged standards. The skills contain no host-specific runtime paths or commands.
+Load `spec-and-test-driven-development-duty`. It requires the sibling `test-driven-development` wrapper and the two packaged standards. The wrapper loads the exact selected skill from `vendor/test-driven-development/SKILL.md`. The entrypoint and wrapper contain no host-specific runtime paths or commands.
 
 ## Methodology boundary
 
@@ -58,7 +61,7 @@ Use `.codex-plugin/plugin.json` or `.agents/plugins/marketplace.json` through th
 
 ## Versioning
 
-`VERSION`, every plugin manifest, and both skill frontmatters carry the same semantic version. Change all governed artifacts in one commit and release one tag. Roll back the package revision, not individual files.
+`VERSION`, plugin manifests, the entrypoint, and the portable TDD wrapper carry package version `0.1.0`. The vendored TDD source retains version `1.1.0`. `COMPONENTS.json` records the wrapper-to-source relation, component versions, source, copy mode, and digest. Change governed artifacts in one commit and release one tag. Roll back the package revision, not individual files.
 
 ## Validation
 

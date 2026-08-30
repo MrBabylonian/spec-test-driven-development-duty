@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import sys
@@ -43,6 +44,7 @@ class PackageValidator:
         self._validate_version()
         self._validate_paths()
         self._validate_manifests()
+        self._validate_components()
         self._validate_skills()
         self._validate_portability()
         self._validate_report()
@@ -58,6 +60,7 @@ class PackageValidator:
     def _validate_paths(self) -> None:
         required_paths = (
             "plugin.json",
+            "COMPONENTS.json",
             "README.md",
             "NOTICE.md",
             ".claude-plugin/plugin.json",
@@ -69,7 +72,7 @@ class PackageValidator:
             "skills/spec-and-test-driven-development-duty/references/NAMING.md",
             "skills/spec-and-test-driven-development-duty/templates/duty-report.md",
             "skills/test-driven-development/SKILL.md",
-            "skills/test-driven-development/testing-anti-patterns.md",
+            "vendor/test-driven-development/SKILL.md",
             "tests/test_package.py",
         )
         for relative_path in required_paths:
@@ -119,6 +122,8 @@ class PackageValidator:
 
     def _validate_skills(self) -> None:
         skills_root = self.package_root / "skills"
+        components_payload = self._read_json("COMPONENTS.json")
+        component_contracts = components_payload.get("components") or {}
         discovered_skill_paths = sorted(skills_root.glob("*/SKILL.md"))
         expected_names = {
             "spec-and-test-driven-development-duty",
@@ -132,7 +137,9 @@ class PackageValidator:
             frontmatter_fields = FrontmatterReader.read(skill_path)
             if frontmatter_fields.get("name") != skill_path.parent.name:
                 self.errors.append(f"Skill name mismatch: {skill_path}")
-            if frontmatter_fields.get("version") != self.package_version:
+            component_contract = component_contracts.get(skill_path.parent.name) or {}
+            expected_version = component_contract.get("version")
+            if frontmatter_fields.get("version") != expected_version:
                 self.errors.append(f"Skill version mismatch: {skill_path}")
             description = frontmatter_fields.get("description", "")
             if not description or len(description) > 1024:
@@ -147,6 +154,59 @@ class PackageValidator:
             self.errors.append(
                 f"Entrypoint exceeds word budget: {len(entrypoint_words)} words"
             )
+
+    def _validate_components(self) -> None:
+        components_payload = self._read_json("COMPONENTS.json")
+        if components_payload.get("package_version") != self.package_version:
+            self.errors.append("COMPONENTS.json package version mismatch")
+        component_contracts = components_payload.get("components")
+        if not isinstance(component_contracts, dict):
+            self.errors.append("COMPONENTS.json components must be an object")
+            return
+
+        wrapper_contract = component_contracts.get("test-driven-development")
+        if not isinstance(wrapper_contract, dict):
+            self.errors.append("Missing portable TDD wrapper contract")
+            return
+        source_component_name = wrapper_contract.get("source_component")
+        if source_component_name != "test-driven-development-source":
+            self.errors.append("Portable TDD wrapper has the wrong source component")
+
+        tdd_contract = component_contracts.get(source_component_name)
+        if not isinstance(tdd_contract, dict):
+            self.errors.append("Missing vendored TDD component contract")
+            return
+        if tdd_contract.get("copy_mode") != "verbatim":
+            self.errors.append("TDD component must use verbatim copy mode")
+        tdd_relative_path = tdd_contract.get("path")
+        if not isinstance(tdd_relative_path, str):
+            self.errors.append("TDD component path must be a string")
+            return
+        tdd_path = self.package_root / tdd_relative_path
+        if not tdd_path.is_file():
+            self.errors.append("TDD component file is missing")
+            return
+        actual_digest = hashlib.sha256(tdd_path.read_bytes()).hexdigest()
+        if actual_digest != tdd_contract.get("sha256"):
+            self.errors.append("TDD component digest mismatch")
+
+        tdd_directory_files = sorted(
+            package_path.relative_to(tdd_path.parent).as_posix()
+            for package_path in tdd_path.parent.rglob("*")
+            if package_path.is_file()
+        )
+        if tdd_directory_files != ["SKILL.md"]:
+            self.errors.append(
+                f"Unexpected files in TDD component: {tdd_directory_files}"
+            )
+
+        wrapper_path = self.package_root / str(wrapper_contract.get("path", ""))
+        if not wrapper_path.is_file():
+            self.errors.append("Portable TDD wrapper file is missing")
+            return
+        wrapper_text = wrapper_path.read_text(encoding="utf-8")
+        if "../../vendor/test-driven-development/SKILL.md" not in wrapper_text:
+            self.errors.append("Portable TDD wrapper does not load vendored source")
 
     def _validate_portability(self) -> None:
         entrypoint_path = (

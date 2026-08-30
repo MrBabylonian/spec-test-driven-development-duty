@@ -1,0 +1,24 @@
+{
+  "package_version": "0.1.0",
+  "components": {
+    "spec-and-test-driven-development-duty": {
+      "path": "skills/spec-and-test-driven-development-duty/SKILL.md",
+      "role": "entrypoint",
+      "version": "0.1.0"
+    },
+    "test-driven-development": {
+      "path": "skills/test-driven-development/SKILL.md",
+      "role": "portable-wrapper",
+      "source_component": "test-driven-development-source",
+      "version": "0.1.0"
+    },
+    "test-driven-development-source": {
+      "path": "vendor/test-driven-development/SKILL.md",
+      "role": "vendored-supporting-skill",
+      "source": "installed:software-development/test-driven-development",
+      "version": "1.1.0",
+      "sha256": "39361054f58ecc8de9cac0f1364aee94e795a446030bb57595f7b7ca0c1ffbbe",
+      "copy_mode": "verbatim"
+    }
+  }
+}
