@@ -1,0 +1,18 @@
+{
+  "name": "spec-test-driven-development-duty-dev",
+  "description": "Local marketplace for the packaged development duty.",
+  "owner": {
+    "name": "MrBabylonian"
+  },
+  "plugins": [
+    {
+      "name": "spec-test-driven-development-duty",
+      "description": "Spec-led vertical TDD with packaged coding standards.",
+      "version": "0.1.0",
+      "source": "./",
+      "author": {
+        "name": "MrBabylonian"
+      }
+    }
+  ]
+}

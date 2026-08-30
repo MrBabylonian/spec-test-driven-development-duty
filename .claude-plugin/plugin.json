@@ -1,0 +1,14 @@
+{
+  "name": "spec-test-driven-development-duty",
+  "version": "0.1.0",
+  "description": "Spec-led vertical TDD with packaged coding standards.",
+  "author": {
+    "name": "MrBabylonian"
+  },
+  "keywords": [
+    "spec-driven-development",
+    "test-driven-development",
+    "coding-standards",
+    "naming"
+  ]
+}
