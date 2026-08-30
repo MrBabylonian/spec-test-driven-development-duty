@@ -1,16 +1,16 @@
 {
-  "package_version": "0.2.0",
+  "package_version": "0.3.0",
   "components": {
     "spec-and-test-driven-development-duty": {
       "path": "skills/spec-and-test-driven-development-duty/SKILL.md",
       "role": "entrypoint",
-      "version": "0.2.0"
+      "version": "0.3.0"
     },
     "test-driven-development": {
       "path": "skills/test-driven-development/SKILL.md",
       "role": "portable-wrapper",
       "source_component": "test-driven-development-source",
-      "version": "0.2.0"
+      "version": "0.3.0"
     },
     "test-driven-development-source": {
       "path": "vendor/test-driven-development/SKILL.md",
@@ -24,7 +24,7 @@
       "path": "skills/simplify-code/SKILL.md",
       "role": "portable-wrapper",
       "source_component": "simplify-code-source",
-      "version": "0.2.0"
+      "version": "0.3.0"
     },
     "simplify-code-source": {
       "path": "vendor/simplify-code/SKILL.md",
@@ -34,11 +34,29 @@
       "sha256": "c259970bff23997a9b395f514af12723e33218fca97f529b5e0fa914ac72660e",
       "copy_mode": "verbatim"
     },
+    "subagent-driven-development": {
+      "path": "skills/subagent-driven-development/SKILL.md",
+      "role": "portable-wrapper",
+      "source_component": "subagent-driven-development-source",
+      "version": "0.3.0"
+    },
+    "subagent-driven-development-source": {
+      "path": "vendor/subagent-driven-development/SKILL.md",
+      "role": "vendored-supporting-skill",
+      "source": "installed:software-development/subagent-driven-development",
+      "version": "1.1.0",
+      "sha256": "7120fad8ceb9860be267baee027ccb8d5e62629f055d044006cd169c7872d150",
+      "copy_mode": "verbatim",
+      "companion_files": {
+        "vendor/subagent-driven-development/references/context-budget-discipline.md": "325d4f3b16db3215a1d7d8771b4c03af40cad62a468df5c44757c1e6366f2c9c",
+        "vendor/subagent-driven-development/references/gates-taxonomy.md": "2740dbfb83cb58d2e8bffd6d2dca95c2dbccca3b60138dcb81b9be905554043a"
+      }
+    },
     "requesting-code-review": {
       "path": "skills/requesting-code-review/SKILL.md",
       "role": "portable-wrapper",
       "source_component": "requesting-code-review-source",
-      "version": "0.2.0"
+      "version": "0.3.0"
     },
     "requesting-code-review-source": {
       "path": "vendor/requesting-code-review/SKILL.md",

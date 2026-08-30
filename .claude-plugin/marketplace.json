@@ -7,8 +7,8 @@
   "plugins": [
     {
       "name": "spec-test-driven-development-duty",
-      "description": "Spec-led TDD, simplification, review, and coding standards.",
-      "version": "0.2.0",
+      "description": "Spec-led subagent TDD, simplification, review, and standards.",
+      "version": "0.3.0",
       "source": "./",
       "author": {
         "name": "MrBabylonian"

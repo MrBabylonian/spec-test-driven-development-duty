@@ -13,6 +13,9 @@ SELECTED_TDD_SHA256 = "39361054f58ecc8de9cac0f1364aee94e795a446030bb57595f7b7ca0
 SIMPLIFY_CODE_SHA256 = "c259970bff23997a9b395f514af12723e33218fca97f529b5e0fa914ac72660e"
 REQUESTING_CODE_REVIEW_SHA256 = "5a3a44a3667800e2dc836829c6b92fada51e6dc58ac144ec05fe59f47d6bcd84"
 CODE_REVIEWER_TEMPLATE_SHA256 = "595d91d05d5ecba530bd52e1e53c5173d820ab5d4bc223eb7820d69a9ab1c403"
+SUBAGENT_DRIVEN_DEVELOPMENT_SHA256 = "7120fad8ceb9860be267baee027ccb8d5e62629f055d044006cd169c7872d150"
+CONTEXT_BUDGET_DISCIPLINE_SHA256 = "325d4f3b16db3215a1d7d8771b4c03af40cad62a468df5c44757c1e6366f2c9c"
+GATES_TAXONOMY_SHA256 = "2740dbfb83cb58d2e8bffd6d2dca95c2dbccca3b60138dcb81b9be905554043a"
 
 
 class FrontmatterReader:
@@ -49,10 +52,14 @@ class PackageContractTests(unittest.TestCase):
             "skills/test-driven-development/SKILL.md",
             "skills/simplify-code/SKILL.md",
             "skills/requesting-code-review/SKILL.md",
+            "skills/subagent-driven-development/SKILL.md",
             "vendor/test-driven-development/SKILL.md",
             "vendor/simplify-code/SKILL.md",
             "vendor/requesting-code-review/SKILL.md",
             "vendor/requesting-code-review/code-reviewer.md",
+            "vendor/subagent-driven-development/SKILL.md",
+            "vendor/subagent-driven-development/references/context-budget-discipline.md",
+            "vendor/subagent-driven-development/references/gates-taxonomy.md",
             "scripts/validate_package.py",
         )
         missing_paths = [
@@ -105,6 +112,7 @@ class PackageContractTests(unittest.TestCase):
                 "requesting-code-review",
                 "simplify-code",
                 "spec-and-test-driven-development-duty",
+                "subagent-driven-development",
                 "test-driven-development",
             },
             discovered_names,
@@ -134,10 +142,11 @@ class PackageContractTests(unittest.TestCase):
             / "skills/spec-and-test-driven-development-duty/SKILL.md"
         ).read_text(encoding="utf-8")
         required_fragments = (
-            "../test-driven-development/SKILL.md",
-            "../simplify-code/SKILL.md",
-            "../requesting-code-review/SKILL.md",
-            "real-path base",
+            "subagent-driven-development",
+            "test-driven-development",
+            "simplify-code",
+            "requesting-code-review",
+            "resolve this file's real path",
             "references/CODE_STYLE.md",
             "references/NAMING.md",
             "templates/duty-report.md",
@@ -193,6 +202,7 @@ class PackageContractTests(unittest.TestCase):
         wrapper_contracts = {
             "simplify-code": "../../vendor/simplify-code/SKILL.md",
             "requesting-code-review": "../../vendor/requesting-code-review/SKILL.md",
+            "subagent-driven-development": "../../vendor/subagent-driven-development/SKILL.md",
         }
         for skill_name, required_path in wrapper_contracts.items():
             wrapper_text = (
@@ -206,6 +216,9 @@ class PackageContractTests(unittest.TestCase):
             "vendor/simplify-code/SKILL.md": SIMPLIFY_CODE_SHA256,
             "vendor/requesting-code-review/SKILL.md": REQUESTING_CODE_REVIEW_SHA256,
             "vendor/requesting-code-review/code-reviewer.md": CODE_REVIEWER_TEMPLATE_SHA256,
+            "vendor/subagent-driven-development/SKILL.md": SUBAGENT_DRIVEN_DEVELOPMENT_SHA256,
+            "vendor/subagent-driven-development/references/context-budget-discipline.md": CONTEXT_BUDGET_DISCIPLINE_SHA256,
+            "vendor/subagent-driven-development/references/gates-taxonomy.md": GATES_TAXONOMY_SHA256,
         }
         for relative_path, expected_digest in expected_digests.items():
             actual_digest = hashlib.sha256(
@@ -235,6 +248,28 @@ class PackageContractTests(unittest.TestCase):
         self.assertLess(
             entrypoint_text.index("simplify-code"),
             entrypoint_text.index("requesting-code-review"),
+        )
+
+    def test_entrypoint_routes_subagent_implementation(self) -> None:
+        entrypoint_text = (
+            PACKAGE_ROOT / "skills/spec-and-test-driven-development-duty/SKILL.md"
+        ).read_text(encoding="utf-8")
+        required_fragments = (
+            "subagent-driven-development",
+            "classify task independence and file overlap",
+            "fresh implementer",
+            "spec-compliance review",
+            "code-quality review",
+            "controller-run vertical TDD",
+            "Every delegated implementer and reviewer",
+            "every file it references",
+            "No isolated reviewer capability",
+        )
+        for required_fragment in required_fragments:
+            self.assertIn(required_fragment, entrypoint_text)
+        self.assertLess(
+            entrypoint_text.index("subagent-driven-development"),
+            entrypoint_text.index("simplify-code"),
         )
 
     def test_readme_defines_methodology_boundary(self) -> None:

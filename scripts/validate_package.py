@@ -71,7 +71,11 @@ class PackageValidator:
             "skills/spec-and-test-driven-development-duty/references/CODE_STYLE.md",
             "skills/spec-and-test-driven-development-duty/references/NAMING.md",
             "skills/spec-and-test-driven-development-duty/templates/duty-report.md",
+            "skills/subagent-driven-development/SKILL.md",
             "skills/test-driven-development/SKILL.md",
+            "vendor/subagent-driven-development/SKILL.md",
+            "vendor/subagent-driven-development/references/context-budget-discipline.md",
+            "vendor/subagent-driven-development/references/gates-taxonomy.md",
             "vendor/test-driven-development/SKILL.md",
             "tests/test_package.py",
         )
@@ -129,6 +133,7 @@ class PackageValidator:
             "requesting-code-review",
             "simplify-code",
             "spec-and-test-driven-development-duty",
+            "subagent-driven-development",
             "test-driven-development",
         }
         discovered_names = {skill_path.parent.name for skill_path in discovered_skill_paths}
@@ -173,6 +178,15 @@ class PackageValidator:
                 ["SKILL.md"],
             ),
             ("simplify-code", "simplify-code-source", ["SKILL.md"]),
+            (
+                "subagent-driven-development",
+                "subagent-driven-development-source",
+                [
+                    "SKILL.md",
+                    "references/context-budget-discipline.md",
+                    "references/gates-taxonomy.md",
+                ],
+            ),
             (
                 "requesting-code-review",
                 "requesting-code-review-source",
@@ -274,9 +288,11 @@ class PackageValidator:
                 )
 
         required_fragments = (
-            "../test-driven-development/SKILL.md",
-            "../simplify-code/SKILL.md",
-            "../requesting-code-review/SKILL.md",
+            "subagent-driven-development",
+            "test-driven-development",
+            "simplify-code",
+            "requesting-code-review",
+            "resolve this file's real path",
             "references/CODE_STYLE.md",
             "references/NAMING.md",
             "templates/duty-report.md",

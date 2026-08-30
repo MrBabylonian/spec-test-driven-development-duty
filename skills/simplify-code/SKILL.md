@@ -1,7 +1,7 @@
 ---
 name: simplify-code
 description: Use when completed implementation needs a focused simplification pass.
-version: 0.2.0
+version: 0.3.0
 metadata:
   package: spec-test-driven-development-duty
   role: portable-wrapper

@@ -1,7 +1,7 @@
 ---
 name: test-driven-development
 description: Use when implementing any feature or bugfix, before writing implementation code.
-version: 0.2.0
+version: 0.3.0
 metadata:
   package: spec-test-driven-development-duty
   role: portable-wrapper
