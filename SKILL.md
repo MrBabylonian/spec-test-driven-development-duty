@@ -1,5 +1,5 @@
 ---
-name: spec-and-test-driven-development-duty
+name: spec-test-driven-development-duty
 description: Use when implementing a specification or feature list.
 version: 0.3.0
 metadata:
@@ -13,7 +13,7 @@ metadata:
 
 Route clarified specifications through planned TDD implementation, per-task reviews, simplification, final review, and duty reporting.
 
-**PACKAGE SKILLS:** Load this package's `subagent-driven-development`, `test-driven-development`, `simplify-code`, and `requesting-code-review` in one namespace. Without a loader, resolve this file's real path and read sibling skill directories.
+**SUPPORTING WORKFLOWS:** Resolve this file's real path. Read `references/subagent-driven-development.md`, `references/test-driven-development.md`, `references/simplify-code.md`, and `references/requesting-code-review.md` when the routing below requires them. Map tool names in those references to equivalent host capabilities.
 
 **PACKAGE STANDARDS:** Read `references/CODE_STYLE.md` and `references/NAMING.md`.
 
@@ -24,7 +24,7 @@ NO COMPLETION BEFORE ROUTED IMPLEMENTATION, SIMPLIFICATION, FINAL REVIEW, AND EV
 
 ## Instruction Gate — Every Role
 
-Before every stage and delegated task or review, re-read applicable `AGENTS.md`, every file it references, and both standards. Every delegated implementer and reviewer receives current rules or accessible exact paths and confirms compliance. Changed rules require revalidation; unavailable rules block. No exception exists for deadlines, approval, convenience, or passing tests.
+Before every stage and delegated task or review, re-read applicable `AGENTS.md`, every file it references, and both standards. Every delegated implementer and reviewer receives current rules or exact paths and confirms compliance. Changed rules require revalidation; unavailable rules block. No exception exists for deadlines, approval, convenience, or passing tests.
 
 ## Input Gate
 
@@ -35,11 +35,11 @@ Convert supplied requirements into IDs with observable acceptance. If any ambigu
 ## Mandatory Routing
 
 1. **Input:** Pass Input and Instruction gates.
-2. **Plan:** Create ordered task cards from the ledger; classify task independence and file overlap. Load `subagent-driven-development` to apply its routing and review discipline.
-3. **Independent implementation:** With isolated agents, use `subagent-driven-development`: one fresh implementer per task with packaged TDD, then spec-compliance review and code-quality review. Fix and re-review before the next task.
+2. **Plan:** Create ordered task cards from the ledger; classify task independence and file overlap. Read `references/subagent-driven-development.md` to apply its routing and review discipline.
+3. **Independent implementation:** With isolated agents, follow `references/subagent-driven-development.md`: one fresh implementer per task using `references/test-driven-development.md`, then spec-compliance review and code-quality review. Fix and re-review before the next task.
 4. **Coupled implementation:** For overlapping tasks, use controller-run vertical TDD; retain fresh spec and quality reviewers. **No isolated reviewer capability:** block.
-5. **Simplification:** After task/integration gates pass, execute `simplify-code`; rerun tests and spec checks. Per-task reviews do not replace it.
-6. **Final review:** Execute `requesting-code-review` with spec, ledger, diff, and evidence. Task reviews do not replace it.
+5. **Simplification:** After task/integration gates pass, follow `references/simplify-code.md`; rerun tests and spec checks. Per-task reviews do not replace it.
+6. **Final review:** Follow `references/requesting-code-review.md` with spec, ledger, diff, and evidence. Task reviews do not replace it.
 7. **Remediation:** Fix Critical or Important findings; behavior changes require RED→GREEN. Repeat Simplification and Final review until clear.
 8. **Handoff:** Re-run the Instruction gate, close the ledger, and use `templates/duty-report.md`.
 
