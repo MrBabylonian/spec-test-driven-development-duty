@@ -1,73 +1,48 @@
 {
   "package_version": "0.3.0",
   "components": {
-    "spec-and-test-driven-development-duty": {
-      "path": "skills/spec-and-test-driven-development-duty/SKILL.md",
+    "spec-test-driven-development-duty": {
+      "path": "SKILL.md",
       "role": "entrypoint",
       "version": "0.3.0"
     },
     "test-driven-development": {
-      "path": "skills/test-driven-development/SKILL.md",
-      "role": "portable-wrapper",
-      "source_component": "test-driven-development-source",
-      "version": "0.3.0"
-    },
-    "test-driven-development-source": {
-      "path": "vendor/test-driven-development/SKILL.md",
-      "role": "vendored-supporting-skill",
+      "path": "references/test-driven-development.md",
+      "role": "supporting-reference",
       "source": "installed:software-development/test-driven-development",
       "version": "1.1.0",
       "sha256": "39361054f58ecc8de9cac0f1364aee94e795a446030bb57595f7b7ca0c1ffbbe",
       "copy_mode": "verbatim"
     },
     "simplify-code": {
-      "path": "skills/simplify-code/SKILL.md",
-      "role": "portable-wrapper",
-      "source_component": "simplify-code-source",
-      "version": "0.3.0"
-    },
-    "simplify-code-source": {
-      "path": "vendor/simplify-code/SKILL.md",
-      "role": "vendored-supporting-skill",
+      "path": "references/simplify-code.md",
+      "role": "supporting-reference",
       "source": "installed:software-development/simplify-code",
       "version": "1.1.0",
       "sha256": "c259970bff23997a9b395f514af12723e33218fca97f529b5e0fa914ac72660e",
       "copy_mode": "verbatim"
     },
     "subagent-driven-development": {
-      "path": "skills/subagent-driven-development/SKILL.md",
-      "role": "portable-wrapper",
-      "source_component": "subagent-driven-development-source",
-      "version": "0.3.0"
-    },
-    "subagent-driven-development-source": {
-      "path": "vendor/subagent-driven-development/SKILL.md",
-      "role": "vendored-supporting-skill",
+      "path": "references/subagent-driven-development.md",
+      "role": "supporting-reference",
       "source": "installed:software-development/subagent-driven-development",
       "version": "1.1.0",
-      "sha256": "7120fad8ceb9860be267baee027ccb8d5e62629f055d044006cd169c7872d150",
-      "copy_mode": "verbatim",
+      "sha256": "3ac51abb7a2b6ca6ebfe0ee77630958bc3e5eb1013cdc8cfb5549f3e2770d1c2",
+      "copy_mode": "path-adapted",
       "companion_files": {
-        "vendor/subagent-driven-development/references/context-budget-discipline.md": "325d4f3b16db3215a1d7d8771b4c03af40cad62a468df5c44757c1e6366f2c9c",
-        "vendor/subagent-driven-development/references/gates-taxonomy.md": "2740dbfb83cb58d2e8bffd6d2dca95c2dbccca3b60138dcb81b9be905554043a"
+        "references/context-budget-discipline.md": "325d4f3b16db3215a1d7d8771b4c03af40cad62a468df5c44757c1e6366f2c9c",
+        "references/gates-taxonomy.md": "2740dbfb83cb58d2e8bffd6d2dca95c2dbccca3b60138dcb81b9be905554043a"
       }
     },
     "requesting-code-review": {
-      "path": "skills/requesting-code-review/SKILL.md",
-      "role": "portable-wrapper",
-      "source_component": "requesting-code-review-source",
-      "version": "0.3.0"
-    },
-    "requesting-code-review-source": {
-      "path": "vendor/requesting-code-review/SKILL.md",
-      "role": "vendored-supporting-skill",
+      "path": "references/requesting-code-review.md",
+      "role": "supporting-reference",
       "source": "installed:requesting-code-review",
       "version": "unversioned",
-      "sha256": "5a3a44a3667800e2dc836829c6b92fada51e6dc58ac144ec05fe59f47d6bcd84",
-      "copy_mode": "verbatim",
+      "sha256": "cbb5199d89870eb1db0702c220182ef2e23481594a4fff306fa5f2e2d14d953d",
+      "copy_mode": "path-adapted",
       "companion_files": {
-        "vendor/requesting-code-review/code-reviewer.md": "595d91d05d5ecba530bd52e1e53c5173d820ab5d4bc223eb7820d69a9ab1c403",
-        "vendor/requesting-code-review/agents/openai.yaml": "1917e3cf2c957e7512343e622b002a873f325fbf931bed77d71afb5a02ca431d"
+        "references/code-reviewer.md": "595d91d05d5ecba530bd52e1e53c5173d820ab5d4bc223eb7820d69a9ab1c403"
       }
     }
   }
