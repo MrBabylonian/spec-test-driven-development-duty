@@ -8,6 +8,16 @@ from pathlib import Path
 
 
 SKILL_NAME = "spec-test-driven-development-duty"
+SUPPORTING_COMPONENT_NAMES = frozenset(
+    {
+        "requesting-code-review",
+        "simplify-code",
+        "subagent-driven-development",
+        "test-driven-development",
+    }
+)
+EXPECTED_COMPONENT_NAMES = SUPPORTING_COMPONENT_NAMES | {SKILL_NAME}
+DIGEST_PATTERN = re.compile(r"[0-9a-f]{64}")
 
 
 class PackageValidationError(RuntimeError):
@@ -130,6 +140,7 @@ class PackageValidator:
             self.errors.append("COMPONENTS.json components must be an object")
             return
 
+        self._validate_component_names(component_contracts)
         entrypoint_contract = component_contracts.get(SKILL_NAME)
         if not isinstance(entrypoint_contract, dict):
             self.errors.append(f"Missing entrypoint component: {SKILL_NAME}")
@@ -148,6 +159,25 @@ class PackageValidator:
             for relative_path, expected_digest in companion_contracts.items():
                 self._validate_digest(relative_path, expected_digest)
 
+    def _validate_component_names(self, component_contracts: dict) -> None:
+        discovered_component_names = set(component_contracts)
+        missing_component_names = sorted(
+            EXPECTED_COMPONENT_NAMES - discovered_component_names
+        )
+        unexpected_component_names = sorted(
+            discovered_component_names - EXPECTED_COMPONENT_NAMES
+        )
+        if missing_component_names:
+            self.errors.append(
+                "Missing component contracts: "
+                + ", ".join(missing_component_names)
+            )
+        if unexpected_component_names:
+            self.errors.append(
+                "Unexpected component contracts: "
+                + ", ".join(unexpected_component_names)
+            )
+
     def _validate_component_file(
         self,
         component_name: str,
@@ -162,8 +192,15 @@ class PackageValidator:
             self.errors.append(f"Missing component file: {relative_path}")
             return
         expected_digest = component_contract.get("sha256")
-        if expected_digest is not None:
-            self._validate_digest(relative_path, expected_digest)
+        if (
+            not isinstance(expected_digest, str)
+            or DIGEST_PATTERN.fullmatch(expected_digest) is None
+        ):
+            self.errors.append(
+                f"Missing or invalid SHA-256 digest: {component_name}"
+            )
+            return
+        self._validate_digest(relative_path, expected_digest)
 
     def _validate_digest(self, relative_path: str, expected_digest: object) -> None:
         component_path = self.package_root / relative_path
