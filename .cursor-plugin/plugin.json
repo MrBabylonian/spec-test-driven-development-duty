@@ -1,0 +1,17 @@
+{
+  "name": "spec-test-driven-development-duty",
+  "displayName": "Spec & Test-Driven Development Duty",
+  "version": "0.3.0",
+  "description": "Spec-led subagent TDD, simplification, review, and standards.",
+  "author": {
+    "name": "MrBabylonian"
+  },
+  "keywords": [
+    "spec-driven-development",
+    "test-driven-development",
+    "coding-standards",
+    "naming",
+    "agent-skills"
+  ],
+  "skills": "./skills/"
+}

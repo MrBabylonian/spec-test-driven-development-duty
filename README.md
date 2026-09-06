@@ -34,6 +34,7 @@ vendor/
     references/                                  Gate and context disciplines
 .claude-plugin/                                  Claude Code manifests
 .codex-plugin/                                   Codex plugin manifest
+.cursor-plugin/                                  Cursor plugin manifests
 .agents/plugins/                                 Codex-compatible marketplace
 scripts/validate_package.py                      Dependency-free validator
 tests/test_package.py                            Package contract tests
@@ -70,6 +71,10 @@ For local development, place the checkout directly under the active profile's `p
 ### Claude Code
 
 Add this checkout as a local marketplace, then install `spec-test-driven-development-duty@spec-test-driven-development-duty-dev` through the plugin UI.
+
+### Cursor
+
+Install via the Cursor plugin manager or place the checkout directly under `~/.cursor/plugins/local/spec-test-driven-development-duty`, then reload the window.
 
 ### Codex-compatible hosts
 

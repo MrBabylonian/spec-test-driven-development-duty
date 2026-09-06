@@ -10,5 +10,6 @@
     "test-driven-development",
     "coding-standards",
     "naming"
-  ]
+  ],
+  "skills": "./skills/"
 }

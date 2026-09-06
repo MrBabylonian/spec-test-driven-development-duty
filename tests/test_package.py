@@ -44,6 +44,8 @@ class PackageContractTests(unittest.TestCase):
             ".claude-plugin/plugin.json",
             ".claude-plugin/marketplace.json",
             ".codex-plugin/plugin.json",
+            ".cursor-plugin/plugin.json",
+            ".cursor-plugin/marketplace.json",
             ".agents/plugins/marketplace.json",
             "skills/spec-and-test-driven-development-duty/SKILL.md",
             "skills/spec-and-test-driven-development-duty/references/CODE_STYLE.md",
@@ -75,6 +77,8 @@ class PackageContractTests(unittest.TestCase):
             ".claude-plugin/plugin.json",
             ".claude-plugin/marketplace.json",
             ".codex-plugin/plugin.json",
+            ".cursor-plugin/plugin.json",
+            ".cursor-plugin/marketplace.json",
         )
         self.assertRegex(PACKAGE_VERSION, r"^\d+\.\d+\.\d+$")
         for relative_path in manifest_paths:
