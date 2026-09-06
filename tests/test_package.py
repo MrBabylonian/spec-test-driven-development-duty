@@ -3,13 +3,87 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import shutil
 import unittest
 from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from scripts.validate_package import PackageValidationError, PackageValidator
 
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_VERSION = (PACKAGE_ROOT / "VERSION").read_text(encoding="utf-8").strip()
 SKILL_NAME = "spec-test-driven-development-duty"
+SUPPORTING_COMPONENT_NAMES = {
+    "requesting-code-review",
+    "simplify-code",
+    "subagent-driven-development",
+    "test-driven-development",
+}
+
+
+class MutablePackageFixture:
+    def __init__(self) -> None:
+        self.temporary_directory = TemporaryDirectory()
+        self.package_root = (
+            Path(self.temporary_directory.name) / "skill-package"
+        )
+        shutil.copytree(
+            PACKAGE_ROOT,
+            self.package_root,
+            ignore=shutil.ignore_patterns(".git", "__pycache__"),
+        )
+
+    def close(self) -> None:
+        self.temporary_directory.cleanup()
+
+    def remove_component(self, component_name: str) -> None:
+        components_payload = self._read_components()
+        del components_payload["components"][component_name]
+        self._write_components(components_payload)
+
+    def remove_component_field(
+        self,
+        component_name: str,
+        field_name: str,
+    ) -> None:
+        components_payload = self._read_components()
+        del components_payload["components"][component_name][field_name]
+        self._write_components(components_payload)
+
+    def remove_component_field_if_present(
+        self,
+        component_name: str,
+        field_name: str,
+    ) -> None:
+        components_payload = self._read_components()
+        component_contract = components_payload["components"][component_name]
+        if field_name in component_contract:
+            del component_contract[field_name]
+        self._write_components(components_payload)
+
+    def add_component(self, component_name: str) -> None:
+        components_payload = self._read_components()
+        components_payload["components"][component_name] = {
+            "path": f"references/{component_name}.md",
+            "role": "supporting-reference",
+            "source": f"installed:{component_name}",
+            "version": "unversioned",
+            "sha256": "0" * 64,
+        }
+        self._write_components(components_payload)
+
+    def _read_components(self) -> dict:
+        return json.loads(
+            (self.package_root / "COMPONENTS.json").read_text(encoding="utf-8")
+        )
+
+    def _write_components(self, components_payload: dict) -> None:
+        serialized_components = json.dumps(components_payload, indent=2) + "\n"
+        (self.package_root / "COMPONENTS.json").write_text(
+            serialized_components,
+            encoding="utf-8",
+        )
 
 
 class FrontmatterReader:
@@ -25,6 +99,59 @@ class FrontmatterReader:
             if match:
                 parsed_fields[match.group(1)] = match.group(2).strip()
         return parsed_fields
+
+
+class PackageValidatorRegressionTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.package_fixture = MutablePackageFixture()
+
+    def tearDown(self) -> None:
+        self.package_fixture.close()
+
+    def test_pristine_package_passes_validation(self) -> None:
+        PackageValidator(self.package_fixture.package_root).validate()
+
+    def test_missing_supporting_component_fails_validation(self) -> None:
+        self.package_fixture.remove_component("test-driven-development")
+
+        with self.assertRaisesRegex(
+            PackageValidationError,
+            "Missing component contracts: test-driven-development",
+        ):
+            PackageValidator(self.package_fixture.package_root).validate()
+
+    def test_missing_supporting_digest_fails_validation(self) -> None:
+        self.package_fixture.remove_component_field(
+            "test-driven-development",
+            "sha256",
+        )
+
+        with self.assertRaisesRegex(
+            PackageValidationError,
+            "Missing or invalid SHA-256 digest: test-driven-development",
+        ):
+            PackageValidator(self.package_fixture.package_root).validate()
+
+    def test_missing_entrypoint_digest_fails_validation(self) -> None:
+        self.package_fixture.remove_component_field_if_present(
+            SKILL_NAME,
+            "sha256",
+        )
+
+        with self.assertRaisesRegex(
+            PackageValidationError,
+            f"Missing or invalid SHA-256 digest: {SKILL_NAME}",
+        ):
+            PackageValidator(self.package_fixture.package_root).validate()
+
+    def test_unexpected_component_fails_validation(self) -> None:
+        self.package_fixture.add_component("bogus-component")
+
+        with self.assertRaisesRegex(
+            PackageValidationError,
+            "Unexpected component contracts: bogus-component",
+        ):
+            PackageValidator(self.package_fixture.package_root).validate()
 
 
 class SkillPackageContractTests(unittest.TestCase):
@@ -86,6 +213,10 @@ class SkillPackageContractTests(unittest.TestCase):
         self.assertEqual(
             "SKILL.md",
             component_contracts[SKILL_NAME]["path"],
+        )
+        self.assertEqual(
+            SUPPORTING_COMPONENT_NAMES | {SKILL_NAME},
+            set(component_contracts),
         )
         for component_contract in component_contracts.values():
             self._assert_recorded_digest(component_contract)
@@ -195,9 +326,9 @@ class SkillPackageContractTests(unittest.TestCase):
         self.assertEqual([], symbolic_link_paths)
 
     def _assert_recorded_digest(self, component_contract: dict) -> None:
-        expected_digest = component_contract.get("sha256")
-        if expected_digest is None:
-            return
+        expected_digest = component_contract["sha256"]
+        self.assertIsInstance(expected_digest, str)
+        self.assertRegex(expected_digest, r"^[0-9a-f]{64}$")
         self._assert_digest(component_contract["path"], expected_digest)
 
     def _assert_digest(self, relative_path: str, expected_digest: str) -> None:

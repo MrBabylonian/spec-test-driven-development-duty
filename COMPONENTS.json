@@ -4,7 +4,8 @@
     "spec-test-driven-development-duty": {
       "path": "SKILL.md",
       "role": "entrypoint",
-      "version": "0.3.0"
+      "version": "0.3.0",
+      "sha256": "26272220ac51b73620f89f2dec9849dd866deb707d2dbe379a7e6d3419bf8e8a"
     },
     "test-driven-development": {
       "path": "references/test-driven-development.md",
