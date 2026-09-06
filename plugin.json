@@ -12,5 +12,6 @@
     "coding-standards",
     "naming",
     "agent-skills"
-  ]
+  ],
+  "skills": "./skills/"
 }
