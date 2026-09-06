@@ -62,6 +62,17 @@ class MutablePackageFixture:
             del component_contract[field_name]
         self._write_components(components_payload)
 
+    def add_component(self, component_name: str) -> None:
+        components_payload = self._read_components()
+        components_payload["components"][component_name] = {
+            "path": f"references/{component_name}.md",
+            "role": "supporting-reference",
+            "source": f"installed:{component_name}",
+            "version": "unversioned",
+            "sha256": "0" * 64,
+        }
+        self._write_components(components_payload)
+
     def _read_components(self) -> dict:
         return json.loads(
             (self.package_root / "COMPONENTS.json").read_text(encoding="utf-8")
@@ -97,6 +108,9 @@ class PackageValidatorRegressionTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.package_fixture.close()
 
+    def test_pristine_package_passes_validation(self) -> None:
+        PackageValidator(self.package_fixture.package_root).validate()
+
     def test_missing_supporting_component_fails_validation(self) -> None:
         self.package_fixture.remove_component("test-driven-development")
 
@@ -127,6 +141,15 @@ class PackageValidatorRegressionTests(unittest.TestCase):
         with self.assertRaisesRegex(
             PackageValidationError,
             f"Missing or invalid SHA-256 digest: {SKILL_NAME}",
+        ):
+            PackageValidator(self.package_fixture.package_root).validate()
+
+    def test_unexpected_component_fails_validation(self) -> None:
+        self.package_fixture.add_component("bogus-component")
+
+        with self.assertRaisesRegex(
+            PackageValidationError,
+            "Unexpected component contracts: bogus-component",
         ):
             PackageValidator(self.package_fixture.package_root).validate()
 
